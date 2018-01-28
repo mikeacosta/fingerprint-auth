@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Fingerprint Auth</string>
+    <string name="label_touch">Touch Sensor</string>
+    <string name="msg_no_lock_screen_security">Lock screen security is not enabled in Settings</string>
+    <string name="msg_fps_auth_not_enabled">Fingerprint authentication permission not enabled</string>
+    <string name="msg_register">Register at least one fingerprint in Settings</string>
+</resources>
