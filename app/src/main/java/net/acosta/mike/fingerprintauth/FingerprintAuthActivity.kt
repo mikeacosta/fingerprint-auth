@@ -1,18 +1,19 @@
 package net.acosta.mike.fingerprintauth
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.app.KeyguardManager
 import android.content.Context
-import android.hardware.fingerprint.FingerprintManager
 import android.widget.Toast
 import android.Manifest
 import android.content.pm.PackageManager
-import android.support.v4.app.ActivityCompat
 import android.security.keystore.KeyProperties
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
-import net.acosta.mike.fingerprintdemo.FingerprintHandler
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 
 import java.security.KeyStore
 import java.security.NoSuchAlgorithmException
@@ -31,13 +32,13 @@ import javax.crypto.Cipher
 
 class FingerprintAuthActivity : AppCompatActivity() {
 
-    private var fingerprintManager: FingerprintManager? = null
+    private var fingerprintManager: FingerprintManagerCompat? = null
     private var keyguardManager: KeyguardManager? = null
     private var keyStore: KeyStore? = null
     private var keyGenerator: KeyGenerator? = null
     private val KEY_NAME = "encryption_key"
     private var cipher: Cipher? = null
-    private var cryptoObject: FingerprintManager.CryptoObject? = null
+    private var cryptoObject: FingerprintManagerCompat.CryptoObject? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,7 @@ class FingerprintAuthActivity : AppCompatActivity() {
         if (isDeviceSecurityEnabled()) {
             setKeyStore()
             if (initializeCipher()) {
-                cipher?.let { cryptoObject = FingerprintManager.CryptoObject(it) }
+                cipher?.let { cryptoObject = FingerprintManagerCompat.CryptoObject(it) }
             }
 
             val helper = FingerprintHandler(this)
@@ -57,9 +58,22 @@ class FingerprintAuthActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_exit -> finish()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun setManagers() {
         keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        fingerprintManager = getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
+        fingerprintManager = FingerprintManagerCompat.from(this);
     }
 
     private fun isDeviceSecurityEnabled(): Boolean {
